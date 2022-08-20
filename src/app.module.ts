@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
+import { PetsModule } from './pets/pets.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UsersModule } from './users/users.module';
       logging: process.env.MYSQL_LOGGING ? true : false,
     }),
     UsersModule,
+    PetsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

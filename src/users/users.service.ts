@@ -13,26 +13,37 @@ export class UsersService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  async findAll(name?: string): Promise<User[]> {
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
+    const newUser = this.userRepository.create(createUserDto);
+    return this.userRepository.save(newUser);
+  }
+
+  async findMany(name?: string): Promise<User[]> {
     if (name) {
-      return this.userRepository.findBy({ name: Like(`%${name}%`) });
+      return this.userRepository.find({
+        where: { name: Like(`%${name}%`) },
+        relations: ['pets'],
+      });
     }
-    return this.userRepository.find();
+    return this.userRepository.find({
+      relations: ['pets'],
+    });
   }
 
   async findById(id: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['pets'],
+    });
     if (!user) throw new NotFoundException(errorMessages.NOT_FOUND);
     return user;
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const newUser: User = await this.userRepository.create(createUserDto);
-    return this.userRepository.save(newUser);
-  }
-
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    const user: User = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['pets'],
+    });
     if (!user) throw new NotFoundException(errorMessages.NOT_FOUND);
     if (updateUserDto.name) user.name = updateUserDto.name;
     if (updateUserDto.age) user.age = updateUserDto.age;
@@ -40,9 +51,11 @@ export class UsersService {
   }
 
   async deleteUser(id: number): Promise<DeleteUserDto> {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['pets'],
+    });
     if (!user) throw new NotFoundException(errorMessages.NOT_FOUND);
-    await this.userRepository.remove(user);
-    return user;
+    return this.userRepository.remove(user);
   }
 }

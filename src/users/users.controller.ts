@@ -29,26 +29,26 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @ApiOkResponse({ type: User, isArray: true })
+  @ApiCreatedResponse({ type: User })
+  @ApiBadRequestResponse()
+  @Post()
+  async createUser(@Body() body: CreateUserDto): Promise<User> {
+    return this.usersService.createUser(body);
+  }
+
   @ApiQuery({ name: 'name', type: String, required: false })
+  @ApiOkResponse({ type: User, isArray: true })
   @Get()
-  async getUsers(@Query('name') name?: string): Promise<User[]> {
-    return await this.usersService.findAll(name);
+  async findManyUsers(@Query('name') name?: string): Promise<User[]> {
+    return this.usersService.findMany(name);
   }
 
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: User })
   @ApiNotFoundResponse()
   @Get(':id')
-  async getUserById(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return await this.usersService.findById(id);
-  }
-
-  @ApiCreatedResponse({ type: User })
-  @ApiBadRequestResponse()
-  @Post()
-  async createUser(@Body() body: CreateUserDto): Promise<User> {
-    return await this.usersService.createUser(body);
+  async findUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    return this.usersService.findById(id);
   }
 
   @ApiParam({ name: 'id', type: Number })
@@ -60,7 +60,7 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateUserDto,
   ): Promise<User> {
-    return await this.usersService.updateUser(id, body);
+    return this.usersService.updateUser(id, body);
   }
 
   @ApiParam({ name: 'id', type: Number })
@@ -70,6 +70,6 @@ export class UsersController {
   async deleteUser(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<DeleteUserDto> {
-    return await this.usersService.deleteUser(id);
+    return this.usersService.deleteUser(id);
   }
 }
