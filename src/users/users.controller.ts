@@ -33,14 +33,14 @@ export class UsersController {
   @ApiBadRequestResponse()
   @Post()
   async createUser(@Body() body: CreateUserDto): Promise<User> {
-    return this.usersService.createUser(body);
+    return this.usersService.createOneUser(body);
   }
 
   @ApiQuery({ name: 'name', type: String, required: false })
   @ApiOkResponse({ type: User, isArray: true })
   @Get()
-  async findManyUsers(@Query('name') name?: string): Promise<User[]> {
-    return this.usersService.findMany(name);
+  async findUsers(@Query('name') name?: string): Promise<User[]> {
+    return this.usersService.findManyUsers(name);
   }
 
   @ApiParam({ name: 'id', type: Number })
@@ -48,7 +48,7 @@ export class UsersController {
   @ApiNotFoundResponse()
   @Get(':id')
   async findUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return this.usersService.findById(id);
+    return this.usersService.findOneUserById(id);
   }
 
   @ApiParam({ name: 'id', type: Number })
@@ -60,7 +60,7 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateUserDto,
   ): Promise<User> {
-    return this.usersService.updateUser(id, body);
+    return this.usersService.updateOneUser(id, body);
   }
 
   @ApiParam({ name: 'id', type: Number })
@@ -70,6 +70,6 @@ export class UsersController {
   async deleteUser(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<DeleteUserDto> {
-    return this.usersService.deleteUser(id);
+    return this.usersService.deleteOneUser(id);
   }
 }

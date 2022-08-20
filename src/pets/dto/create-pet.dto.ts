@@ -8,7 +8,7 @@ export class CreatePetDto {
   @MaxLength(255)
   name: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, nullable: true })
   @IsOptional()
   @IsNumber()
   age?: number;

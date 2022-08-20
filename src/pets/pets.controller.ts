@@ -36,14 +36,14 @@ export class PetsController {
   async createPet(
     @Body(PetTypeValidationPipe) createPetDto: CreatePetDto,
   ): Promise<Pet> {
-    return this.petsService.create(createPetDto);
+    return this.petsService.createOnePet(createPetDto);
   }
 
   @ApiQuery({ name: 'name', type: String, required: false })
   @ApiOkResponse({ type: Pet, isArray: true })
   @Get()
-  findManyPets(@Query('name') name?: string): Promise<Pet[]> {
-    return this.petsService.findMany(name);
+  findPets(@Query('name') name?: string): Promise<Pet[]> {
+    return this.petsService.findManyPets(name);
   }
 
   @ApiParam({ name: 'id', type: Number })
@@ -51,7 +51,7 @@ export class PetsController {
   @ApiNotFoundResponse()
   @Get(':id')
   findPet(@Param('id', ParseIntPipe) id: number): Promise<Pet> {
-    return this.petsService.findOneById(id);
+    return this.petsService.findOnePetById(id);
   }
 
   @ApiParam({ name: 'id', type: Number })
@@ -63,7 +63,7 @@ export class PetsController {
     @Param('id', ParseIntPipe) id: number,
     @Body(PetTypeValidationPipe) updatePetDto: UpdatePetDto,
   ): Promise<Pet> {
-    return this.petsService.update(id, updatePetDto);
+    return this.petsService.updateOnePet(id, updatePetDto);
   }
 
   @ApiParam({ name: 'id', type: Number })
@@ -71,6 +71,6 @@ export class PetsController {
   @ApiNotFoundResponse()
   @Delete(':id')
   removePet(@Param('id', ParseIntPipe) id: number): Promise<DeletePetDto> {
-    return this.petsService.remove(id);
+    return this.petsService.removeOnePet(id);
   }
 }

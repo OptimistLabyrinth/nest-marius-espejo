@@ -5,18 +5,18 @@ import { CreatePetDto } from './dto/create-pet.dto';
 import { DeletePetDto } from './dto/delete-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
 import { Pet } from './entities/pet.entity';
-import { errorMessages } from './errorMessages';
+import { errorMessages } from './stringTokens/errorMessages';
 
 @Injectable()
 export class PetsService {
   constructor(@InjectRepository(Pet) private petRepository: Repository<Pet>) {}
 
-  async create(createPetDto: CreatePetDto): Promise<Pet> {
+  async createOnePet(createPetDto: CreatePetDto): Promise<Pet> {
     const newUser = this.petRepository.create(createPetDto);
     return this.petRepository.save(newUser);
   }
 
-  findMany(name?: string): Promise<Pet[]> {
+  findManyPets(name?: string): Promise<Pet[]> {
     if (name) {
       return this.petRepository.find({
         where: { name: Like(`%${name}%`) },
@@ -28,7 +28,7 @@ export class PetsService {
     });
   }
 
-  async findOneById(id: number): Promise<Pet> {
+  async findOnePetById(id: number): Promise<Pet> {
     const pet = await this.petRepository.findOne({
       where: { id },
       relations: ['owner'],
@@ -37,7 +37,7 @@ export class PetsService {
     return pet;
   }
 
-  async update(id: number, updatePetDto: UpdatePetDto): Promise<Pet> {
+  async updateOnePet(id: number, updatePetDto: UpdatePetDto): Promise<Pet> {
     const pet = await this.petRepository.findOne({
       where: { id },
       relations: ['owner'],
@@ -49,7 +49,7 @@ export class PetsService {
     return this.petRepository.save(pet);
   }
 
-  async remove(id: number): Promise<DeletePetDto> {
+  async removeOnePet(id: number): Promise<DeletePetDto> {
     const pet = await this.petRepository.findOne({
       where: { id },
       relations: ['owner'],

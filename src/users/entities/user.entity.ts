@@ -5,18 +5,20 @@ import { Pet } from 'src/pets/entities/pet.entity';
 @Entity()
 export class User {
   @ApiProperty()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
   id: number;
 
   @ApiProperty()
   @Column()
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({ nullable: true })
   @Column({ nullable: true, unsigned: true })
-  age?: number;
+  age: number;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  @OneToMany((type) => Pet, (pet) => pet.owner)
+  @OneToMany(() => Pet, (pet) => pet.owner, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   pets: Pet[];
 }

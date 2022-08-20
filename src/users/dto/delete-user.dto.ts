@@ -1,9 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { OmitType } from '@nestjs/swagger';
+import { User } from '../entities/user.entity';
 
-export class DeleteUserDto {
-  @ApiProperty()
-  name: string;
-
-  @ApiProperty()
-  age?: number;
-}
+export class DeleteUserDto extends OmitType(User, ['id']) {}

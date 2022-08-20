@@ -6,22 +6,24 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class Pet {
   @ApiProperty()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
   id: number;
 
   @ApiProperty()
   @Column()
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({ nullable: true })
   @Column({ nullable: true, unsigned: true })
-  age?: number;
+  age: number;
 
   @ApiProperty()
   @Column({ unsigned: true })
   type: PetType;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  @ManyToOne((type) => User, (user) => user.pets)
+  @ManyToOne(() => User, (user) => user.pets, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   owner: User;
 }
