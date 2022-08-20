@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { IdPoolModule } from 'src/id-pool/id-pool.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 @Module({
-  imports: [IdPoolModule],
+  imports: [TypeOrmModule.forFeature([User])],
   controllers: [UsersController],
   providers: [UsersService],
 })

@@ -1,52 +1,48 @@
-import { Injectable } from '@nestjs/common';
-import { IdPoolService } from 'src/id-pool/id-pool.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Like, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { DeleteUserDto } from './dto/delete-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { errorMessages } from './errorMessages';
 
 @Injectable()
 export class UsersService {
-  private users: User[];
-  private idPoolService: IdPoolService;
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+  ) {}
 
-  constructor(idPoolService: IdPoolService) {
-    this.idPoolService = idPoolService;
-    this.users = [
-      {
-        id: 1234,
-        name: 'Marius',
-      },
-      {
-        id: 1200,
-        name: 'Marius',
-      },
-      {
-        id: 4567,
-        name: 'Jason',
-      },
-      {
-        id: 7890,
-        name: 'Titus',
-      },
-    ];
-  }
-
-  findAll(name?: string): User[] {
+  async findAll(name?: string): Promise<User[]> {
     if (name) {
-      return this.users.filter((user) => user.name === name);
+      return this.userRepository.findBy({ name: Like(`%${name}%`) });
     }
-    return this.users;
+    return this.userRepository.find();
   }
 
-  findById(userId: number): User | null {
-    return this.users.find((user) => user.id === userId);
+  async findById(id: number): Promise<User> {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException(errorMessages.NOT_FOUND);
+    return user;
   }
 
-  createUser(createUserDto: CreateUserDto): User {
-    const newUser: User = {
-      id: this.idPoolService.getRandomInt(),
-      ...createUserDto,
-    };
-    this.users.push(newUser);
-    return newUser;
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
+    const newUser: User = await this.userRepository.create(createUserDto);
+    return this.userRepository.save(newUser);
+  }
+
+  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const user: User = await this.userRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException(errorMessages.NOT_FOUND);
+    if (updateUserDto.name) user.name = updateUserDto.name;
+    if (updateUserDto.age) user.age = updateUserDto.age;
+    return this.userRepository.save(user);
+  }
+
+  async deleteUser(id: number): Promise<DeleteUserDto> {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException(errorMessages.NOT_FOUND);
+    await this.userRepository.remove(user);
+    return user;
   }
 }
