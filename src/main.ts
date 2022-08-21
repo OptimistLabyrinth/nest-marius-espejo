@@ -23,6 +23,6 @@ async function bootstrap() {
   const nestApplicationPort = configService.get<number>(
     'NEST_APPLICATION_PORT',
   );
-  await app.listen(nestApplicationPort);
+  await app.listen(nestApplicationPort || 3000);
 }
 bootstrap();
