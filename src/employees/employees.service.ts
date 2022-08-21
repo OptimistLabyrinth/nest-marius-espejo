@@ -26,7 +26,7 @@ export class EmployeesService {
 
   async initializeDatabase() {
     try {
-      // * repository.save() 할 때마다 repository.save() 호출하기
+      // * 엔티티 create 또는 update 할 때마다 repository.save() 호출하기
       // await this.savingWheneverNewEntityCreated();
       // * cascade 속성 사용해서 repository.save() 함수 한번만 호출하기
       await this.callingRepositorySaveOnlyOnceUsingCasecadeOptionInRelationship();
